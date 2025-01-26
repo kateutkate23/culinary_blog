@@ -18,10 +18,10 @@ class Post(models.Model):
     content = models.TextField(default='Новая статья...', verbose_name='Текст статьи')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_time = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
-    photo = models.ImageField(upload_to='photos/', blank=True, null=True, verbose_name='Изображения')
+    photo = models.ImageField(upload_to='static/', blank=True, null=True, verbose_name='Изображения')
     watched = models.IntegerField(default=0, verbose_name='Просмотры')
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='posts', verbose_name='Категория')
 
     def __str__(self):
         return self.title

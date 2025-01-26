@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('content', models.TextField(default='Новая статья...')),
                 ('created_time', models.DateTimeField(auto_now_add=True)),
                 ('updated_time', models.DateTimeField(auto_now=True)),
-                ('photo', models.ImageField(blank=True, null=True, upload_to='photos/')),
+                ('photo', models.ImageField(blank=True, null=True, upload_to='static/')),
                 ('watched', models.IntegerField(default=0)),
                 ('is_published', models.BooleanField(default=True)),
                 ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blog.category')),
