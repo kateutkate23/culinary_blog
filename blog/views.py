@@ -1,17 +1,15 @@
-from django.db.models import Count
 from django.shortcuts import render
 from .models import Category, Post
+from django.db.models import F
 
 
 def index(request):
     """Главная страница сайта"""
     posts = Post.objects.all()
-    categories = Category.objects.annotate(post_count=Count('posts')).filter(post_count__gt=0)
 
     context = {
         'title': 'Главная страница',
         'posts': posts,
-        'categories': categories,
     }
 
     return render(request, 'blog/index.html', context)
@@ -20,12 +18,25 @@ def index(request):
 def category_list(request, pk):
     """Выбор блюд отдельной категории"""
     posts = Post.objects.filter(category_id=pk)
-    categories = Category.objects.annotate(post_count=Count('posts')).filter(post_count__gt=0)
 
     context = {
         'title': posts[0].category,
         'posts': posts,
-        'categories': categories,
     }
 
     return render(request, 'blog/index.html', context)
+
+
+def post_detail(request, pk):
+    """Подробности поста"""
+    Post.objects.filter(pk=pk).update(watched=F('watched') + 1)
+    post = Post.objects.get(pk=pk)
+    recommended_posts = Post.objects.exclude(pk=pk).order_by('-watched')[:3]
+
+    context = {
+        'title': post.title,
+        'post': post,
+        'recommended_posts': recommended_posts,
+    }
+
+    return render(request, 'blog/post_detail.html', context)
