@@ -1,11 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Category, Post
 from django.db.models import F
+from .forms import PostAddForm
 
 
 def index(request):
     """Главная страница сайта"""
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-updated_time')
 
     context = {
         'title': 'Главная страница',
@@ -40,3 +41,23 @@ def post_detail(request, pk):
     }
 
     return render(request, 'blog/post_detail.html', context)
+
+
+def add_post(request):
+    """Добавление поста пользователем"""
+    if request.method == 'POST':
+        form = PostAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = Post.objects.create(**form.cleaned_data)
+            post.save()
+
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostAddForm()
+
+    context = {
+        'title': 'Добавить статью',
+        'form': form
+    }
+
+    return render(request, 'blog/add_post.html', context)
