@@ -3,6 +3,7 @@ from .models import Category, Post
 from django.db.models import F
 from .forms import PostAddForm, LoginForm, RegistrationForm
 from django.contrib.auth import login, logout
+from django.contrib import messages
 
 
 def index(request):
@@ -71,6 +72,7 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            messages.success(request, 'Вы успешно вошли в аккаунт!')
 
             return redirect('index')
     else:
