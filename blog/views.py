@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import Category, Post
 from django.db.models import F
-from .forms import PostAddForm
+from .forms import PostAddForm, LoginForm, RegistrationForm
+from django.contrib.auth import login, logout
 
 
 def index(request):
@@ -61,3 +62,48 @@ def add_post(request):
     }
 
     return render(request, 'blog/add_post.html', context)
+
+
+def user_login(request):
+    """Аутентификация пользователя"""
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+
+            return redirect('index')
+    else:
+        form = LoginForm()
+
+    context = {
+        'title': 'Войти',
+        'form': form,
+    }
+
+    return render(request, 'blog/login.html', context)
+
+
+def user_logout(request):
+    """Выход из аккаунта"""
+    logout(request)
+    return redirect('index')
+
+
+def user_register(request):
+    """Регистрация пользователя"""
+    if request.method == 'POST':
+        form = RegistrationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+
+            return redirect('login')
+    else:
+        form = RegistrationForm()
+
+    context = {
+        'title': 'Регистрация',
+        'form': form,
+    }
+
+    return render(request, 'blog/register.html', context)
